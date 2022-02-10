@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./api
+    container_name: delivery-service
+    command: npm run start
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - HTTP_HOST=localhost/api
+      - HTTP_PORT=3000
