@@ -10,13 +10,17 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.includes('jpg')) {
+  if (
+    file.mimetype == 'image/png' ||
+    file.mimetype == 'image/jpg' ||
+    file.mimetype == 'image/jpeg'
+  ) {
     cb(null, true);
   } else {
-    cb(new Error('Only images! (*.jpg)'));
+    cb(new Error('Only images! (*.png, *.jpg, *.jpeg)'));
   }
 };
 
 let upload = multer({ storage: storage, fileFilter });
 
-export default upload.single('BookFile'); // !single
+export default upload.array('imageFieldName', 3);

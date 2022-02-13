@@ -1,10 +1,23 @@
 import Advertisement from '../models/Advertisement.js';
 
 const getAdvertisements = async (req, res) => {
-  const { shortText, description, userId, tags } = req.params;
+  const { shortText, description, userId, tags } = req.query;
   try {
-    const advertisements = await Advertisement.find();
-    res.status(200).json(advertisements);
+    if (shortText || description || userId || tags) {
+      const advertisements = await Advertisement.find({
+        isDeleted: { $ne: true },
+        $or: [
+          { shortText: { $regex: `${shortText}`, $options: 'i' } },
+          { description: { $regex: `${description}`, $options: 'i' } },
+          { userId },
+          { tags: { $all: tags } },
+        ],
+      });
+      res.status(200).json({ data: advertisements, status: 'ok' });
+    } else {
+      const advertisements = await Advertisement.find();
+      res.status(200).json({ data: advertisements, status: 'ok' });
+    }
   } catch (e) {
     console.log(e);
     res.status(404).json({ message: `err` });
@@ -15,7 +28,7 @@ const getAdvertisementById = async (req, res) => {
   const { id } = req.params;
   try {
     const advertisement = await Advertisement.findById(id);
-    res.status(200).json(advertisement);
+    res.status(200).json({ data: advertisement, status: 'ok' });
   } catch (e) {
     console.log(e);
     res.status(404).json({ message: `Объявление не найдено` });
@@ -25,7 +38,7 @@ const getAdvertisementById = async (req, res) => {
 const addAdvertisement = async (req, res) => {
   const { shortText, description, images, userId, createdAt, updatedAt, tags, isDeleted } =
     req.body;
-
+  console.log(images);
   try {
     const advertisement = await Advertisement.create({
       shortText,
