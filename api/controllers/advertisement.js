@@ -70,6 +70,8 @@ const removeAdvertisementById = async (req, res) => {
       console.log(e);
       res.status(404).json({ message: `Объявление не найдено` });
     }
+  } else {
+    return res.status(401).json({ message: `Не достаточно прав для удаления` });
   }
 
   try {
@@ -77,7 +79,7 @@ const removeAdvertisementById = async (req, res) => {
     res.status(200).json({ message: `Объявление удалено` });
   } catch (e) {
     console.log(e);
-    res.status(404).json({ message: `Ошибка удаления объявления` });
+    res.status(500).json({ message: `Ошибка удаления объявления` });
   }
 };
 
